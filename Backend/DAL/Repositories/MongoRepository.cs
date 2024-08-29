@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Backend.DAL.Collections;
 using MongoDB.Bson;
@@ -19,9 +18,9 @@ namespace Backend.DAL.Repositories
             _userProfileCollection = database.GetCollection<UserProfile>("UserProfile");
         }
 
-        public User GetUserProfileByIdAsync(string userId)
+        public async Task<User> GetUserProfileByIdAsync(string userId)
         {
-            var userProfileCollection = _userProfileCollection.Find(new BsonDocument()).ToList();
+            var userProfileCollection = await _userProfileCollection.Find(new BsonDocument()).ToListAsync();
 
             foreach (var userProfile in userProfileCollection)
             {

@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
 using Backend.DAL.Repositories;
 using Backend.DAL.Collections;
-using MongoDB.Bson;
-using System.Collections.Generic;
 
 namespace Backend.Services
 {
@@ -15,9 +13,9 @@ namespace Backend.Services
             _repository = repository;
         }
 
-        public User GetUserProfileAsync(string userId)
+        public async Task<User> GetUserProfileAsync(string userId)
         {
-            return _repository.GetUserProfileByIdAsync(userId);
+            return await _repository.GetUserProfileByIdAsync(userId);
         }
     }
 }

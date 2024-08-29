@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using AdaptiveCards;
+using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +23,7 @@ namespace Backend.Controllers
         public async Task<ActionResult> GetWeather()
         {
             var userId = "616e4dd058eb4e3b9ef9fa87";
-            var userProfile = _userService.GetUserProfileAsync(userId);
+            var userProfile = await _userService.GetUserProfileAsync(userId);
 
             if (userProfile == null)
             {
@@ -35,7 +37,32 @@ namespace Backend.Controllers
                 return NotFound("Weather data not available.");
             }
 
-            return Ok(weatherData);
+            var adaptiveCard = CreateWeatherAdaptiveCard(weatherData);
+
+            return Ok(adaptiveCard.ToJson());
+        }
+
+        private AdaptiveCard CreateWeatherAdaptiveCard(WeatherData weatherData)
+        {
+            var card = new AdaptiveCard("1.2");
+
+            card.Body.Add(new AdaptiveTextBlock
+            {
+                Text = $"{weatherData.LocationName} - {weatherData.Description}",
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Large
+            });
+
+            foreach (var day in weatherData.Days)
+            {
+                card.Body.Add(new AdaptiveTextBlock
+                {
+                    Text = $"{day.Date}: {day.TempMin}°C - {day.TempMax}°C",
+                    Size = AdaptiveTextSize.Medium
+                });
+            }
+
+            return card;
         }
     }
 }
